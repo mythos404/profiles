@@ -1,5 +1,5 @@
 #simply config
-#Date: 2026.05.07
+#Date: 2026.05.020
 #Author: mythos
 
 [General]
@@ -9,6 +9,7 @@ ipv6-vif = off
 interface-mode = auto
 # DNS
 dns-server = 119.29.29.29,114.114.114.114,223.5.5.5
+doh-server = https://1.1.1.1/dns-query,https://8.8.8.8/dns-query
 dns-reject-mode = LoopbackIP
 domain-reject-mode = DNS
 sni-sniffing = true
@@ -16,7 +17,7 @@ sni-sniffing = true
 disable-stun = true
 udp-fallback-mode = REJECT
 # 测速
-proxy-test-url = http://bing.com/generate_204
+proxy-test-url = https://bing.com/generate_204
 internet-test-url = http://wifi.vivo.com.cn/generate_204
 test-timeout = 3
 # 局域网
@@ -64,6 +65,8 @@ US_Filter = NameRegex, FilterKey = "(?i)(美|波特兰|达拉斯|俄勒冈|凤�
 FINAL,Available
 
 [Remote Rule]
+https://rule.kelee.one/Loon/GitHub.lsr, policy=Taiwan, tag=GitHub.lsr, enabled=true
+https://kelee.one/Tool/Loon/Lsr/ApplePushNotificationService.lsr, policy=Available, tag=ApplePushNotificationService.lsr, enabled=true
 https://rule.kelee.one/Loon/Netflix.lsr, policy=Netflix, tag=Netflix.lsr, enabled=true
 https://rule.kelee.one/Loon/Spotify.lsr, policy=Spotify, tag=Spotify.lsr, enabled=true
 https://kelee.one/Tool/Loon/Lsr/AI.lsr, policy=United States, tag=AI, enabled=true
@@ -77,19 +80,29 @@ https://rule.kelee.one/Loon/Instagram.lsr, policy=United States, tag=Instagram.l
 https://rule.kelee.one/Loon/Google.lsr, policy=United States, tag=Google.lsr, enabled=true
 https://rule.kelee.one/Loon/Apple.lsr, policy=DIRECT, tag=Apple.lsr, enabled=true
 https://kelee.one/Tool/Loon/Lsr/LAN_SPLITTER.lsr, policy=DIRECT, tag=LAN, enabled=true
-https://kelee.one/Tool/Loon/Lsr/REGION_SPLITTER.lsr, policy=DIRECT, tag=CN REGION, enabled=true
+https://kelee.one/Tool/Loon/Lsr/REGION_SPLITTER.lsr, policy=DIRECT, tag=CN, enabled=true
 
 [Rewrite]
 
 [Script]
 
 [Plugin]
-# 防止 App 绕过系统 DNS（强烈建议）
-https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx, pin=true, enabled=true
-# 防 DNS 泄漏（配合你的代理使用）
 https://kelee.one/Tool/Loon/Lpx/Prevent_DNS_Leaks.lpx, policy=Available, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Block_HTTPDNS.lpx, pin=true, enabled=true
+https://kelee.one/Tool/Loon/Lpx/BlockAdvertisers.lpx, pin=true, enabled=true
+https://kelee.one/Tool/Loon/Lpx/FleaMarket_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Weixin_Official_Accounts_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Taobao_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/CoolApk_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Amap_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Bilibili_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Spotify_lyrics_translation.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/Reddit_remove_ads.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/AppleWeatherEnhancer.lpx, enabled=true
+https://kelee.one/Tool/Loon/Lpx/12306_remove_ads.lpx, enabled=true
+# 防止 App 绕过系统 DNS（强烈建议）
+# 防 DNS 泄漏（配合你的代理使用）
 # 节点检测工具（方便排查节点问题）
 https://kelee.one/Tool/Loon/Lpx/Node_detection_tool.lpx, enabled=true
 
 [Mitm]
-skip-server-cert-verify = false
