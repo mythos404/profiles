@@ -18,7 +18,7 @@ policy_groups:
     name: MESL
     type: select
     urls:
-    - https://em.mesl.cloud/ems/get?token=00028d9ab8e7206e8d6551f3fabfdd44
+
     block_quic: true
     hidden: true
 - select:
