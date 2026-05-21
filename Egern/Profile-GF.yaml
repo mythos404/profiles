@@ -1,0 +1,115 @@
+ipv6: false
+allow_external_connections: false
+proxy_latency_test_url: http://cp.cloudflare.com/generate_204
+direct_latency_test_url: http://wifi.vivo.com.cn/generate_204
+include_all_networks: true
+include_apns: true
+vif_excluded_routes:
+- 10.0.0.0/8
+- 127.0.0.0/8
+- 172.16.0.0/12
+- 192.168.0.0/16
+dns: {}
+bypass_tunnel_proxy:
+- localhost
+- '*.local'
+policy_groups:
+- external:
+    name: MESL
+    type: select
+    urls:
+    - https://em.mesl.cloud/ems/get?token=00028d9ab8e7206e8d6551f3fabfdd44
+    block_quic: true
+    hidden: true
+- select:
+    name: Proxy
+    policies:
+    - MESL
+    flatten: true
+    filter: .*
+- select:
+    name: Hong Kong
+    policies:
+    - MESL
+    flatten: true
+    filter: (?i)(港|HK|Hong)
+- select:
+    name: Taiwan
+    policies:
+    - MESL
+    flatten: true
+    filter: (?i)(台|TW|Tai)
+- select:
+    name: Singapore
+    policies:
+    - MESL
+    flatten: true
+    filter: (?i)(新加坡|坡|狮城|SG|Singapore)
+- select:
+    name: United States
+    policies:
+    - MESL
+    flatten: true
+    filter: (?i)(美|洛杉矶|圣何塞|圣克拉拉|西雅图|硅谷|US|United States)
+- select:
+    name: Netflix
+    policies:
+    - Singapore
+    - Hong Kong
+    - Taiwan
+- select:
+    name: YouTube
+    policies:
+    - United States
+    - Singapore
+    - Hong Kong
+    - Taiwan
+- select:
+    name: Spotify
+    policies:
+    - Hong Kong
+    - Singapore
+    - United States
+    - Taiwan
+    - DIRECT
+rules:
+- protocol:
+    match: stun
+    policy: REJECT
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Netflix/Netflix.list
+    policy: Netflix
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Spotify/Spotify.list
+    policy: Spotify
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/YouTube/YouTube.list
+    policy: YouTube
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/OpenAI/OpenAI.list
+    policy: United States
+    disabled: false
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Claude/Claude.list
+    policy: United States
+    disabled: false
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Google/Google.list
+    policy: Taiwan
+    disabled: false
+- rule_set:
+    name: Apple
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/refs/heads/master/rule/Surge/Apple/Apple_All.list
+    policy: DIRECT
+    disabled: false
+- rule_set:
+    name: LAN
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Lan/Lan.list
+    policy: DIRECT
+    disabled: false
+- geoip:
+    match: CN
+    policy: DIRECT
+    no_resolve: false
+- default:
+    policy: Proxy
