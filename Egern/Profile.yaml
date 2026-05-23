@@ -1,5 +1,5 @@
-vif_only: true
-block_quic: true
+ipv6: false
+vif_only: false
 hijack_dns:
 - '*:53'
 geoip_db_url: https://github.com/Hackl0us/GeoIP2-CN/raw/release/Country.mmdb
@@ -16,9 +16,14 @@ dns:
   - domain_wildcard:
       match: '*'
       value: Domestic-DNS
+  block_ips:
+  - 0.0.0.0
 bypass_tunnel_proxy:
 - localhost
 - '*.local'
+- 192.168.0.0/16
+- 10.0.0.0/8
+- 172.16.0.0/12
 policy_groups:
 - external:
     name: Proxy
@@ -26,6 +31,7 @@ policy_groups:
     urls:
 
     filter: .*
+    update_interval: 86400
     hidden: false
 - select:
     name: Hong Kong
@@ -53,68 +59,103 @@ policy_groups:
     policies:
     - Proxy
     flatten: true
-    filter: (?i)(美|洛杉矶|圣何塞|圣克拉拉|西雅图|硅谷|US|United States)
+    filter: (?i)(美国|洛杉矶|圣何塞|圣克拉拉|西雅图|硅谷|US|United States)
+    hidden: false
+- select:
+    name: Google
+    policies:
+    - Hong Kong
+    - Taiwan
+    - Singapore
+    - United States
+    flatten: false
+    hidden: false
+- select:
+    name: YouTube
+    policies:
+    - Hong Kong
+    - Taiwan
+    - Singapore
+    - United States
+    flatten: false
     hidden: false
 - select:
     name: Netflix
     policies:
-    - Singapore
     - Hong Kong
     - Taiwan
-- select:
-    name: YouTube
-    policies:
+    - Singapore
     - United States
-    - Singapore
-    - Hong Kong
-    - Taiwan
+    flatten: false
+    hidden: false
 - select:
     name: Spotify
     policies:
     - Hong Kong
+    - Taiwan
     - Singapore
     - United States
-    - Taiwan
     - DIRECT
+    flatten: false
+    hidden: false
 rules:
 - protocol:
+    name: STUN
     match: stun
     policy: REJECT
-- domain_suffix:
-    match: push.apple.com
-    policy: Hong Kong
-- domain_keyword:
-    match: courier
-    policy: Hong Kong
+    disabled: false
 - rule_set:
-    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Netflix/Netflix.list
-    policy: Netflix
-- rule_set:
-    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Spotify/Spotify.list
-    policy: Spotify
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Google/Google.list
+    policy: Google
+    update_interval: 86400
+    disabled: false
 - rule_set:
     match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/YouTube/YouTube.list
     policy: YouTube
+    update_interval: 86400
+    disabled: false
 - rule_set:
     match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/YouTubeMusic/YouTubeMusic.list
     policy: YouTube
+    update_interval: 86400
+    disabled: false
 - rule_set:
     match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/OpenAI/OpenAI.list
     policy: United States
+    update_interval: 86400
+    disabled: false
 - rule_set:
     match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Claude/Claude.list
     policy: United States
+    update_interval: 86400
+    disabled: false
 - rule_set:
-    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Google/Google.list
-    policy: Taiwan
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Netflix/Netflix.list
+    policy: Netflix
+    update_interval: 86400
+    disabled: false
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Spotify/Spotify.list
+    policy: Spotify
+    update_interval: 86400
+    disabled: false
 - rule_set:
     name: Apple
     match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Apple/Apple_All.list
     policy: DIRECT
+    update_interval: 86400
+    disabled: false
 - rule_set:
     name: LAN
     match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/Lan/Lan.list
     policy: DIRECT
+    update_interval: 86400
+    disabled: false
+- rule_set:
+    match: https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Surge/China/China.list
+    policy: DIRECT
+    update_interval: 86400
+    disabled: false
 - geoip:
     match: CN
     policy: DIRECT
